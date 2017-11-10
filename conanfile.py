@@ -10,14 +10,16 @@ class FreetypeConan(ConanFile):
     version = "2.8.1"
     folder = "freetype-%s" % version
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = '''shared=False
-    fPIC=True'''
+    options = {"shared": [True, False], "fPIC": [True, False], "with_harfbuzz": [True, False] }
+    default_options = "shared=False", "fPIC=True", "with_harfbuzz=False"
     generators = "cmake"
     url="http://github.com/bincrafters/conan-freetype"
     license="MIT"
     exports = "FindFreetype.cmake"
     requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@lasote/stable"
+
+    def requirements(self):
+        self.requires.add("harfbuzz/1.6.3@bincrarfters/testing")
 
     def config(self):
         del self.settings.compiler.libcxx 
@@ -51,6 +53,7 @@ conan_basic_setup()
 
         cmake.definitions["WITH_ZLIB"] = "On"
         cmake.definitions["WITH_PNG"] = "On"
+        cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
 
         cmake.configure(source_dir="freetype-%s" % self.version)
         cmake.build()
@@ -72,9 +75,8 @@ conan_basic_setup()
             old_str = "-install_name \$rpath/"
             new_str = "-install_name "
             replace_in_file("%s/builds/unix/configure" % self.folder, old_str, new_str)
-            
-        libpng_libs = 'LIBPNG_LIBS=%s'
-        
+
+        ## NEEDS FIXING FOR HARFBUZZ
         configure_command = 'cd %s && %s ./configure --with-harfbuzz=no %s' % (self.folder, env_line, custom_vars)
         self.output.warn("Configure with: %s" % configure_command)
         self.run(configure_command)
@@ -85,9 +87,9 @@ conan_basic_setup()
         self.copy("FindFreetype.cmake", ".", ".")
 
         # Copy the license files
-        self.copy("LICENSE.TXT", dst="licenses", ignore_case=True, keep_path=False)
-        self.copy("FLT.TXT", dst="licenses", ignore_case=True, keep_path=False)
-        self.copy("GPLv2.TXT", dst="licenses", ignore_case=True, keep_path=False)
+        self.copy("LICENSE.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
+        self.copy("FLT.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
+        self.copy("GPLv2.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
 
         self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
         self.copy("*freetype*.lib", dst="lib", keep_path=False)
