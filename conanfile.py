@@ -7,6 +7,7 @@ import os
 class FreetypeConan(ConanFile):
     name = "freetype"
     version = "2.8.1"
+    description = "FreeType is a freely available software library to render fonts."
     folder = "freetype-%s" % version
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "with_harfbuzz": [True, False] }
@@ -39,6 +40,9 @@ class FreetypeConan(ConanFile):
                               'endif ()\n',
                               '')
 
+    def fetch_hb(self):
+        return
+
     def build(self):
         cmake = CMake(self)
 
@@ -52,6 +56,9 @@ class FreetypeConan(ConanFile):
         cmake.definitions["WITH_ZLIB"] = "On"
         cmake.definitions["WITH_PNG"] = "On"
         cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
+
+        if self.options.with_harfbuzz:
+            self.fetch_hb()
 
         cmake.configure(source_dir="..", build_dir="build")
         cmake.build()
