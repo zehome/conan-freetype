@@ -1,9 +1,10 @@
-from conans import ConanFile
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from conans import ConanFile, CMake, tools
+from conans import ConfigureEnvironment
 from conans.errors import ConanException
-from conans.tools import download, unzip, replace_in_file
 import os
-import shutil
-from conans import CMake, ConfigureEnvironment
 
 class FreetypeConan(ConanFile):
     name = "freetype"
@@ -15,11 +16,14 @@ class FreetypeConan(ConanFile):
     generators = "cmake"
     url="http://github.com/bincrafters/conan-freetype"
     license="MIT"
+    exports_sources = "CMakeLists.txt"
     exports = "FindFreetype.cmake"
     requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@lasote/stable"
+    source_url = "http://downloads.sourceforge.net/project/freetype/freetype2/{0}".format(version)
 
     def requirements(self):
-        self.requires.add("harfbuzz/1.6.3@bincrarfters/testing")
+        if self.options.with_harfbuzz:
+            self.requires.add("harfbuzz/1.6.3@bincrarfters/testing")
 
     def config(self):
         del self.settings.compiler.libcxx 
@@ -27,21 +31,17 @@ class FreetypeConan(ConanFile):
         #    raise ConanException("The lib CMakeLists.txt does not support creation of SHARED libs")
 
     def source(self):
-        zip_name = "%s.tar.gz" % self.folder
-        download("http://downloads.sourceforge.net/project/freetype/freetype2/{0}/{1}".format(self.version, zip_name), zip_name)
-        unzip(zip_name)
-        replace_in_file("freetype-%s/CMakeLists.txt" % self.version,
-                        "project(freetype)",
-                        """project(freetype)
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-""")
-        replace_in_file("freetype-%s/CMakeLists.txt" % self.version,
-                        'if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)\n' +
-                        '  message(FATAL_ERROR "Building shared libraries on Windows needs MinGW")\n' +
-                        'endif ()\n',
-                        '')
+        archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
+        source_file = '{0}/{1}'.format(self.source_url, archive_file)
+        tools.get(source_file)
 
+        os.rename('{0}-{1}'.format(self.name, self.version), 'sources')
+
+        tools.replace_in_file(os.path.join('sources','CMakeLists.txt'),
+                              'if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)\n' +
+                              '  message(FATAL_ERROR "Building shared libraries on Windows needs MinGW")\n' +
+                              'endif ()\n',
+                              '')
 
     def build(self):
         cmake = CMake(self)
@@ -55,33 +55,9 @@ conan_basic_setup()
         cmake.definitions["WITH_PNG"] = "On"
         cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
 
-        cmake.configure(source_dir="freetype-%s" % self.version)
+        cmake.configure(source_dir="..", build_dir="build")
         cmake.build()
         cmake.install()
-
-    def build_with_make(self):
-        env = ConfigureEnvironment(self.deps_cpp_info, self.settings)
-        if self.options.fPIC:
-            env_line = env.command_line.replace('CFLAGS="', 'CFLAGS="-fPIC ')
-        else:
-            env_line = env.command_line
-            
-        custom_vars = "LIBPNG_LIBS=0 BZIP2_LIBS=0" # Trick: This way it didn't look for system libs and take the env variables from env_line
-                
-        self.run("cd %s" % self.folder)
-        
-        self.output.warn(env_line)
-        if self.settings.os == "Macos": # Fix rpath, we want empty rpaths, just pointing to lib file
-            old_str = "-install_name \$rpath/"
-            new_str = "-install_name "
-            replace_in_file("%s/builds/unix/configure" % self.folder, old_str, new_str)
-
-        ## NEEDS FIXING FOR HARFBUZZ
-        configure_command = 'cd %s && %s ./configure --with-harfbuzz=no %s' % (self.folder, env_line, custom_vars)
-        self.output.warn("Configure with: %s" % configure_command)
-        self.run(configure_command)
-        self.run("cd %s && %s make" % (self.folder, env_line))
-
 
     def package(self):
         self.copy("FindFreetype.cmake", ".", ".")
@@ -91,13 +67,14 @@ conan_basic_setup()
         self.copy("FLT.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
         self.copy("GPLv2.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
 
-        self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
-        self.copy("*freetype*.lib", dst="lib", keep_path=False)
+        #self.copy("*", dst="include", src='include', keep_path=True, symlinks=True)
+        #self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
+        #self.copy("*freetype*.lib", dst="lib", keep_path=False)
         # UNIX
         if not self.options.shared:
             self.copy(pattern="*.a", dst="lib", keep_path=False)
         else:
-            self.copy(pattern="*.dll*", dst="bin", src="%s/bin" % self.folder, keep_path=False)
+            #self.copy(pattern="*.dll*", dst="bin", src="%s/bin" % self.folder, keep_path=False)
             self.copy(pattern="*.so*", dst="lib", keep_path=False)
             self.copy(pattern="*.dylib*", dst="lib", keep_path=False)
 
@@ -106,4 +83,6 @@ conan_basic_setup()
             libname = "freetyped"
         else:
             libname = "freetype"
+
         self.cpp_info.libs = [libname]
+        self.cpp_info.includedirs.append(os.path.join("include","freetype2"))

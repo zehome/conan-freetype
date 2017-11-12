@@ -1,5 +1,4 @@
-from conans import ConanFile, tools, CMake
-from conans import GCC, CMake
+from conans import ConanFile, CMake, RunEnvironment, tools
 import os
 
 class DefaultNameConan(ConanFile):
@@ -11,16 +10,15 @@ class DefaultNameConan(ConanFile):
         cmake.configure()
         cmake.build()
 
-    def imports(self):
-        lib_dir_src = 'lib' if self.settings.os != 'Windows' else 'bin'
-        self.copy("*.dll", dst="bin", src=lib_dir_src)
-        self.copy("*.dylib*", dst="bin", src=lib_dir_src)
-        self.copy('*.so*', dst='bin', src=lib_dir_src)
-
     def test(self):
-        self.output.warn("conan: " + self.conanfile_directory)
-        bin_dir = os.path.join(os.getcwd(), "bin")
-        os.chdir(bin_dir)
-        with tools.environment_append({"LD_LIBRARY_PATH": bin_dir, "DYLD_LIBRARY_PATH": bin_dir}):
+        with tools.environment_append(RunEnvironment(self).vars):
             fontfile = os.path.join(self.conanfile_directory, 'OpenSans-Bold.ttf')
-            self.run(".{sep}test_package {fontfile} 'lasote!' > file.txt".format(fontfile=fontfile, sep=os.sep))
+            args = '{fontfile} \'lasote!\' > file.txt'.format(fontfile=fontfile)
+            test_binary = os.path.join("bin","test_package")
+
+            if self.settings.os == "Macos":
+                test_binary = "DYLD_LIBRARY_PATH=%s %s" % (os.environ.get('DYLD_LIBRARY_PATH', ''), test_binary)
+            elif self.settings.os != "Windows":
+                test_binary = "LD_LIBRARY_PATH=%s %s" % (os.environ.get('LD_LIBRARY_PATH', ''), test_binary)
+
+            self.run("%s %s" % (test_binary, args))
