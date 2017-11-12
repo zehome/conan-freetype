@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
-from conans import ConfigureEnvironment
-from conans.errors import ConanException
 import os
 
 class FreetypeConan(ConanFile):
