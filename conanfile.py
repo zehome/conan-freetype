@@ -7,6 +7,7 @@ import os
 class FreetypeConan(ConanFile):
     name = "freetype"
     version = "2.8.1"
+    description = "FreeType is a freely available software library to render fonts."
     folder = "freetype-%s" % version
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "with_harfbuzz": [True, False] }
@@ -21,12 +22,10 @@ class FreetypeConan(ConanFile):
 
     def requirements(self):
         if self.options.with_harfbuzz:
-            self.requires.add("harfbuzz/1.6.3@bincrarfters/testing")
+            self.requires.add("harfbuzz/master@bincrafters/testing")
 
     def config(self):
-        del self.settings.compiler.libcxx 
-        #if self.settings.compiler == "Visual Studio" and self.options.shared:
-        #    raise ConanException("The lib CMakeLists.txt does not support creation of SHARED libs")
+        del self.settings.compiler.libcxx
 
     def source(self):
         archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
@@ -41,6 +40,9 @@ class FreetypeConan(ConanFile):
                               'endif ()\n',
                               '')
 
+    def fetch_hb(self):
+        return
+
     def build(self):
         cmake = CMake(self)
 
@@ -49,9 +51,14 @@ class FreetypeConan(ConanFile):
         if self.settings.os == "Windows" and self.options.shared:
             cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = "On"
 
+        cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+
         cmake.definitions["WITH_ZLIB"] = "On"
         cmake.definitions["WITH_PNG"] = "On"
         cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
+
+        if self.options.with_harfbuzz:
+            self.fetch_hb()
 
         cmake.configure(source_dir="..", build_dir="build")
         cmake.build()
