@@ -21,12 +21,10 @@ class FreetypeConan(ConanFile):
 
     def requirements(self):
         if self.options.with_harfbuzz:
-            self.requires.add("harfbuzz/1.6.3@bincrarfters/testing")
+            self.requires.add("harfbuzz/master@bincrafters/testing")
 
     def config(self):
-        del self.settings.compiler.libcxx 
-        #if self.settings.compiler == "Visual Studio" and self.options.shared:
-        #    raise ConanException("The lib CMakeLists.txt does not support creation of SHARED libs")
+        del self.settings.compiler.libcxx
 
     def source(self):
         archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
