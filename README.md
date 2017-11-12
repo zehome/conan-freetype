@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/lasote/conan-freetype.svg)](https://travis-ci.org/lasote/conan-freetype)
+[![Build Status](https://travis-ci.org/sigmoidal/conan-freetype.svg)](https://travis-ci.org/sigmoidal/conan-freetype)
 
 
 # conan-freetype
 
-[Conan.io](https://conan.io) package for freetype library
+[Conan.io](https://conan.io) package for [freetype library](https://www.freetype.org/)
 
-The packages generated with this **conanfile** can be found in [conan.io](https://conan.io/source/freetype/2.6.3/lasote/stable).
+The packages generated with this **conanfile** can be found in [conan.io].
 
 ## Build packages
 
@@ -15,13 +15,13 @@ Download conan client from [Conan.io](https://conan.io) and run:
 
 ## Upload packages to server
 
-    $ conan upload freetype/2.0.3@lasote/stable --all
+    $ conan upload freetype/2.8.1@sigmoidal/stable --all
     
 ## Reuse the packages
 
 ### Basic setup
 
-    $ conan install freetype/2.0.3@lasote/stable
+    $ conan install freetype/2.8.1@sigmoidal/stable
     
 ### Project setup
 
