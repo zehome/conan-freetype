@@ -49,6 +49,8 @@ class FreetypeConan(ConanFile):
         if self.settings.os == "Windows" and self.options.shared:
             cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = "On"
 
+        cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+
         cmake.definitions["WITH_ZLIB"] = "On"
         cmake.definitions["WITH_PNG"] = "On"
         cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
