@@ -17,7 +17,7 @@ class FreetypeConan(ConanFile):
     license="MIT"
     exports_sources = "CMakeLists.txt"
     exports = "FindFreetype.cmake"
-    requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@lasote/stable"
+    requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@conan/stable"
     source_url = "http://downloads.sourceforge.net/project/freetype/freetype2/{0}".format(version)
 
     def requirements(self):
