@@ -28,7 +28,7 @@ Download conan client from [Conan.io](https://conan.io) and run:
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
     
     [requires]
-    freetype/2.0.3@lasote/stable
+    freetype/2.8.1@bincrafters/stable
 
     [options]
     freetype:shared=True # False
