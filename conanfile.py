@@ -22,7 +22,7 @@ class FreetypeConan(ConanFile):
 
     def requirements(self):
         if self.options.with_harfbuzz:
-            self.requires.add("harfbuzz/master@bincrafters/testing")
+            self.requires.add("harfbuzz/1.7.1@bincrafters/stable")
 
     def config(self):
         del self.settings.compiler.libcxx
