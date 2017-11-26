@@ -45,7 +45,6 @@ class FreetypeConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
 
         if self.settings.os == "Windows" and self.options.shared:
