@@ -67,9 +67,9 @@ class FreetypeConan(ConanFile):
         self.copy("FindFreetype.cmake", ".", ".")
 
         # Copy the license files
+        self.copy("%s/docs/FTL*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
+        self.copy("%s/docs/GPLv2*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
         self.copy("%s/docs/LICENSE*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
-        self.copy("%s/docs/FLT.*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
-        self.copy("%s/docs/GPLv2.*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
 
         #self.copy("*", dst="include", src='include', keep_path=True, symlinks=True)
         #self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
