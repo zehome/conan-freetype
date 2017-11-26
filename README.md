@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sigmoidal/conan-freetype.svg)](https://travis-ci.org/sigmoidal/conan-freetype)
+[![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg)](https://travis-ci.org/bincrafters/conan-freetype)
 
 
 # conan-freetype
@@ -15,20 +15,20 @@ Download conan client from [Conan.io](https://conan.io) and run:
 
 ## Upload packages to server
 
-    $ conan upload freetype/2.8.1@sigmoidal/stable --all
+    $ conan upload freetype/2.8.1@bincrafters/stable --all
     
 ## Reuse the packages
 
 ### Basic setup
 
-    $ conan install freetype/2.8.1@sigmoidal/stable
+    $ conan install freetype/2.8.1@bincrafters/stable
     
 ### Project setup
 
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
     
     [requires]
-    freetype/2.0.3@lasote/stable
+    freetype/2.8.1@bincrafters/stable
 
     [options]
     freetype:shared=True # False
