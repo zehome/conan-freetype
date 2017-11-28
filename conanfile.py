@@ -8,13 +8,13 @@ class FreetypeConan(ConanFile):
     name = "freetype"
     version = "2.8.1"
     description = "FreeType is a freely available software library to render fonts."
-    folder = "freetype-%s" % version
+    folder = "sources"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "with_harfbuzz": [True, False] }
     default_options = "shared=False", "fPIC=True", "with_harfbuzz=False"
     generators = "cmake"
     url="http://github.com/bincrafters/conan-freetype"
-    license="MIT"
+    license="BSD"
     exports_sources = "CMakeLists.txt"
     exports = "FindFreetype.cmake"
     requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@conan/stable"
@@ -22,7 +22,7 @@ class FreetypeConan(ConanFile):
 
     def requirements(self):
         if self.options.with_harfbuzz:
-            self.requires.add("harfbuzz/master@bincrafters/testing")
+            self.requires.add("harfbuzz/1.7.1@bincrafters/stable")
 
     def config(self):
         del self.settings.compiler.libcxx
@@ -32,7 +32,7 @@ class FreetypeConan(ConanFile):
         source_file = '{0}/{1}'.format(self.source_url, archive_file)
         tools.get(source_file)
 
-        os.rename('{0}-{1}'.format(self.name, self.version), 'sources')
+        os.rename('{0}-{1}'.format(self.name, self.version), self.folder)
 
         tools.replace_in_file(os.path.join('sources','CMakeLists.txt'),
                               'if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)\n' +
@@ -45,7 +45,6 @@ class FreetypeConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
 
         if self.settings.os == "Windows" and self.options.shared:
@@ -68,9 +67,9 @@ class FreetypeConan(ConanFile):
         self.copy("FindFreetype.cmake", ".", ".")
 
         # Copy the license files
-        self.copy("LICENSE.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
-        self.copy("FLT.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
-        self.copy("GPLv2.TXT", dst="licenses", src="%s/docs" % self.folder, ignore_case=True, keep_path=False)
+        self.copy("%s/docs/FTL*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
+        self.copy("%s/docs/GPLv2*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
+        self.copy("%s/docs/LICENSE*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
 
         #self.copy("*", dst="include", src='include', keep_path=True, symlinks=True)
         #self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)

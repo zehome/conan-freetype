@@ -1,44 +1,50 @@
-[![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg)](https://travis-ci.org/bincrafters/conan-freetype)
+[ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/freetype%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters/_latestVersion)
+[![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg?branch=stable%2F2.8.1)](https://travis-ci.org/bincrafters/conan-freetype)
+[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-freetype)
 
+[Conan.io](https://conan.io) package for [freetype](https://www.freetype.org/) project
 
-# conan-freetype
+The packages generated with this **conanfile** can be found in [Bintray](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters).
 
-[Conan.io](https://conan.io) package for [freetype library](https://www.freetype.org/)
-
-The packages generated with this **conanfile** can be found in [conan.io].
-
-## Build packages
-
-Download conan client from [Conan.io](https://conan.io) and run:
-
-    $ python build.py
-
-## Upload packages to server
-
-    $ conan upload freetype/2.8.1@bincrafters/stable --all
-    
-## Reuse the packages
+## For Users: Use this package
 
 ### Basic setup
 
     $ conan install freetype/2.8.1@bincrafters/stable
-    
+
 ### Project setup
 
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
-    
+
     [requires]
     freetype/2.8.1@bincrafters/stable
 
-    [options]
-    freetype:shared=True # False
-    
     [generators]
-    txt
     cmake
 
-Complete the installation of requirements for your project running:</small></span>
+Complete the installation of requirements for your project running:
 
-    conan install .
+    $ mkdir build && cd build && conan install ..
 
-Project setup installs the library (and all his dependencies) and generates the files *conanbuildinfo.txt* and *conanbuildinfo.cmake* with all the paths and variables that you need to link with your dependencies.
+Note: It is recommended that you run conan install from a build directory and not the root of the project directory.  This is because conan generates *conanbuildinfo* files specific to a single build configuration which by default comes from an autodetected default profile located in ~/.conan/profiles/default .  If you pass different build configuration options to conan install, it will generate different *conanbuildinfo* files.  Thus, they should not be added to the root of the project, nor committed to git.
+
+## For Packagers: Publish this Package
+
+The example below shows the commands used to publish to bincrafters conan repository. To publish to your own conan respository (for example, after forking this git repository), you will need to change the commands below accordingly.
+
+## Build and package
+
+The following command both runs all the steps of the conan file, and publishes the package to the local system cache.  This includes downloading dependencies from "build_requires" and "requires" , and then running the build() method.
+
+    $ conan create bincrafters/stable
+
+## Add Remote
+
+    $ conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
+
+## Upload
+
+    $ conan upload freetype/2.8.1@bincrafters/stable --all -r bincrafters
+
+## License
+[BSD / GPLv2](https://www.freetype.org/license.html)
