@@ -1,6 +1,6 @@
 [ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/freetype%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters/_latestVersion)
 [![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg?branch=stable%2F2.8.1)](https://travis-ci.org/bincrafters/conan-freetype)
-[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-freetype)
+[![Build status](https://ci.appveyor.com/api/projects/status/gpemh777oy9a3434?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-freetype)
 
 [Conan.io](https://conan.io) package for [freetype](https://www.freetype.org/) project
 
