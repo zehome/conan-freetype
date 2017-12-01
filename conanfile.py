@@ -7,6 +7,7 @@ import os
 class FreetypeConan(ConanFile):
     name = "freetype"
     version = "2.8.1"
+    homepage = "https://www.freetype.org"
     description = "FreeType is a freely available software library to render fonts."
     folder = "sources"
     settings = "os", "arch", "compiler", "build_type"
