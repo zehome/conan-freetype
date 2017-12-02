@@ -1,6 +1,6 @@
 [ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/freetype%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters/_latestVersion)
 [![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg?branch=stable%2F2.8.1)](https://travis-ci.org/bincrafters/conan-freetype)
-[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-freetype)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-freetype?branch=stable%2F2.8.1&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-freetype)
 
 [Conan.io](https://conan.io) package recipe for [*freetype*](https://www.freetype.org).
 
@@ -22,11 +22,7 @@ If you handle multiple dependencies in your project is better to add a *conanfil
     freetype/2.8.1@bincrafters/stable
 
     [generators]
-    c
-    m
-    a
-    k
-    e
+    cmake
 
 Complete the installation of requirements for your project running:
 
@@ -47,9 +43,9 @@ The following command both runs all the steps of the conan file, and publishes t
 ### Available Options
 | Option        | Default | Possible Values  |
 | ------------- |:----------------- |:------------:|
+| shared      | False |  [True, False] |
 | with_harfbuzz      | False |  [True, False] |
 | fPIC      | True |  [True, False] |
-| shared      | False |  [True, False] |
 
 ## Add Remote
 
