@@ -44,9 +44,9 @@ The following command both runs all the steps of the conan file, and publishes t
 ### Available Options
 | Option        | Default | Possible Values  |
 | ------------- |:----------------- |:------------:|
-| fPIC      | True |  [True, False] |
-| with_harfbuzz      | False |  [True, False] |
 | shared      | False |  [True, False] |
+| with_harfbuzz      | False |  [True, False] |
+| fPIC      | True |  [True, False] |
 
 ## Add Remote
 
