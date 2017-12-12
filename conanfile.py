@@ -75,6 +75,7 @@ class FreetypeConan(ConanFile):
         self.copy("%s/docs/LICENSE*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
 
         self.copy("freetype.pc", dst=os.path.join('lib','pkgconfig'), ignore_case=True, keep_path=True)
+        self.copy("freetype2.pc", dst=os.path.join('lib','pkgconfig'), ignore_case=True, keep_path=True)
 
         #self.copy("*", dst="include", src='include', keep_path=True, symlinks=True)
         #self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)

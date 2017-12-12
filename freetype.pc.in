@@ -8,5 +8,5 @@ URL: http://freetype.org
 Description: A free, high-quality, and portable font engine.
 Version: @PROJECT_VERSION@
 
-Libs: -L${libdir} @PRIVATE_LIBS@
+Libs: -L${libdir} -lfreetype -lpng16 -lz @PRIVATE_LIBS@
 Cflags: -I${includedir}/freetype2
