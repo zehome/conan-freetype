@@ -62,7 +62,7 @@ class FreetypeConan(ConanFile):
         if self.options.with_harfbuzz:
             self.fetch_hb()
 
-        cmake.configure(source_dir="..", build_dir="build")
+        cmake.configure(build_dir="build")
         cmake.build()
         cmake.install()
 
