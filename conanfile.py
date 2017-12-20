@@ -7,6 +7,7 @@ import os
 class FreetypeConan(ConanFile):
     name = "freetype"
     version = "2.8.1"
+    homepage = "https://www.freetype.org"
     description = "FreeType is a freely available software library to render fonts."
     folder = "sources"
     settings = "os", "arch", "compiler", "build_type"
@@ -15,7 +16,7 @@ class FreetypeConan(ConanFile):
     generators = "cmake"
     url="http://github.com/bincrafters/conan-freetype"
     license="BSD"
-    exports_sources = "CMakeLists.txt"
+    exports_sources = "CMakeLists.txt", "freetype.pc.in"
     exports = "FindFreetype.cmake"
     requires = "libpng/1.6.34@bincrafters/stable", "bzip2/1.0.6@conan/stable"
     source_url = "http://downloads.sourceforge.net/project/freetype/freetype2/{0}".format(version)
@@ -29,7 +30,7 @@ class FreetypeConan(ConanFile):
 
     def source(self):
         archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
-        source_file = '{0}/{1}'.format(self.source_url, archive_file)
+        source_file = '{0}/{1}'.format(self.source_url, archive_file)      
         tools.get(source_file)
 
         os.rename('{0}-{1}'.format(self.name, self.version), self.folder)
@@ -45,11 +46,13 @@ class FreetypeConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        #cmake.verbose = True
+        cmake.definitions["PROJECT_VERSION"] = self.version
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
 
         if self.settings.os == "Windows" and self.options.shared:
             cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = "On"
-
+        
         cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
 
         cmake.definitions["WITH_ZLIB"] = "On"
@@ -59,7 +62,7 @@ class FreetypeConan(ConanFile):
         if self.options.with_harfbuzz:
             self.fetch_hb()
 
-        cmake.configure(source_dir="..", build_dir="build")
+        cmake.configure(build_dir="build")
         cmake.build()
         cmake.install()
 
@@ -67,9 +70,12 @@ class FreetypeConan(ConanFile):
         self.copy("FindFreetype.cmake", ".", ".")
 
         # Copy the license files
-        self.copy("%s/docs/FTL*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
+        self.copy("%s/docs/FTL*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
         self.copy("%s/docs/GPLv2*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
-        self.copy("%s/docs/LICENSE*" % self.folder, dst="licenses", ignore_case=True,  keep_path=False)
+        self.copy("%s/docs/LICENSE*" % self.folder, dst="licenses", ignore_case=True, keep_path=False)
+
+        self.copy("freetype.pc", dst=os.path.join('lib','pkgconfig'), ignore_case=True, keep_path=True)
+        self.copy("freetype2.pc", dst=os.path.join('lib','pkgconfig'), ignore_case=True, keep_path=True)
 
         #self.copy("*", dst="include", src='include', keep_path=True, symlinks=True)
         #self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)

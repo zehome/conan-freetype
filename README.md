@@ -1,10 +1,12 @@
-[ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/freetype%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters/_latestVersion)
+[![Download](https://api.bintray.com/packages/bincrafters/public-conan/freetype%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters/_latestVersion)
 [![Build Status](https://travis-ci.org/bincrafters/conan-freetype.svg?branch=stable%2F2.8.1)](https://travis-ci.org/bincrafters/conan-freetype)
-[![Build status](https://ci.appveyor.com/api/projects/status/gpemh777oy9a3434?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-freetype)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-freetype?branch=stable%2F2.8.1&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-freetype)
 
-[Conan.io](https://conan.io) package for [freetype](https://www.freetype.org/) project
+[Conan.io](https://conan.io) package recipe for [*freetype*](https://www.freetype.org).
 
-The packages generated with this **conanfile** can be found in [Bintray](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters).
+FreeType is a freely available software library to render fonts.
+
+The packages generated with this **conanfile** can be found on [Bintray](https://bintray.com/bincrafters/public-conan/freetype%3Abincrafters).
 
 ## For Users: Use this package
 
@@ -38,6 +40,14 @@ The following command both runs all the steps of the conan file, and publishes t
 
     $ conan create bincrafters/stable
 
+
+### Available Options
+| Option        | Default | Possible Values  |
+| ------------- |:----------------- |:------------:|
+| fPIC      | True |  [True, False] |
+| shared      | False |  [True, False] |
+| with_harfbuzz      | False |  [True, False] |
+
 ## Add Remote
 
     $ conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
@@ -46,5 +56,10 @@ The following command both runs all the steps of the conan file, and publishes t
 
     $ conan upload freetype/2.8.1@bincrafters/stable --all -r bincrafters
 
-## License
-[BSD / GPLv2](https://www.freetype.org/license.html)
+
+## Conan Recipe License
+
+NOTE: The conan recipe license applies only to the files of this recipe, which can be used to build and package freetype.
+It does *not* in any way apply or is related to the actual software being packaged.
+
+[MIT](https://github.com/bincrafters/conan-freetype/blob/stable/2.8.1/LICENSE.md)
