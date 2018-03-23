@@ -3,7 +3,7 @@ project(cmake_wrapper)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_subdirectory(sources)
+add_subdirectory(source_subfolder)
 
 set(DEST_DIR "${CMAKE_INSTALL_PREFIX}")
 CONFIGURE_FILE("freetype.pc.in" "freetype.pc" @ONLY)
