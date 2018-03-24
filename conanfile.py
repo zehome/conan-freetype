@@ -17,8 +17,13 @@ class FreetypeConan(ConanFile):
     exports_sources = ["CMakeLists.txt", "freetype.pc.in"]
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False], "with_harfbuzz": [True, False], "with_png": [True, False], "with_zlib": [True, False] }
-    default_options = "shared=False", "fPIC=True", "with_harfbuzz=False", "with_png=True", "with_zlib=True"
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False],
+        "with_png": [True, False],
+        "with_zlib": [True, False]
+    }
+    default_options = ("shared=False", "fPIC=True", "with_png=True", "with_zlib=True")
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
@@ -27,8 +32,6 @@ class FreetypeConan(ConanFile):
             self.requires.add("libpng/1.6.34@bincrafters/stable")
         if self.options.with_zlib:
             self.requires.add("bzip2/1.0.6@conan/stable")
-        if self.options.with_harfbuzz:
-            self.requires.add("harfbuzz/1.7.6@bincrafters/stable")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -38,9 +41,9 @@ class FreetypeConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def source(self):
-        source_url = "http://downloads.sourceforge.net/project/freetype/freetype2/{0}".format(self.version)
+        source_url = "http://downloads.sourceforge.net/project/freetype/freetype2"
         archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
-        source_file = '{0}/{1}'.format(source_url, archive_file)
+        source_file = '{0}/{1}/{2}'.format(source_url, self.version, archive_file)
         tools.get(source_file)
         os.rename('{0}-{1}'.format(self.name, self.version), self.source_subfolder)
 
@@ -53,7 +56,6 @@ class FreetypeConan(ConanFile):
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.definitions["WITH_ZLIB"] = self.options.with_zlib
         cmake.definitions["WITH_PNG"] = self.options.with_png
-        cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
         cmake.configure(build_dir=self.build_subfolder)
         return cmake
 
@@ -65,10 +67,12 @@ class FreetypeConan(ConanFile):
         cmake = self.configure_cmake()
         cmake.install()
         self.copy("FindFreetype.cmake")
-        self.copy("%s/docs/FTL*" % self.source_subfolder, dst="licenses", ignore_case=True, keep_path=False)
-        self.copy("%s/docs/GPLv2*" % self.source_subfolder, dst="licenses", ignore_case=True, keep_path=False)
-        self.copy("%s/docs/LICENSE*" % self.source_subfolder, dst="licenses", ignore_case=True, keep_path=False)
+        self.copy("FTL.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
+        self.copy("GPLv2.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
+        self.copy("LICENSE.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
-        self.cpp_info.includedirs.append(os.path.join("include","freetype2"))
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.append("m")
+        self.cpp_info.includedirs.append(os.path.join("include", "freetype2"))
