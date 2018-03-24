@@ -38,6 +38,8 @@ class FreetypeConan(ConanFile):
             del self.options.fPIC
 
     def configure(self):
+        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and "MT" in self.settings.compiler.runtime:
+            raise Exception("FreeType does not support runtime MT")
         del self.settings.compiler.libcxx
 
     def source(self):
