@@ -8,7 +8,10 @@ conan_basic_setup()
 
 find_package(Freetype 2.9 REQUIRED)
 
-file(GLOB SOURCE_FILES *.cpp)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/OpenSans-Bold.ttf
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(GLOB SOURCE_FILES *.c)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
