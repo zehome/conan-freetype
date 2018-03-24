@@ -7,7 +7,7 @@ import os
 
 class FreetypeConan(ConanFile):
     name = "freetype"
-    version = "2.9"
+    version = "2.9.0"
     description = "FreeType is a freely available software library to render fonts."
     url = "http://github.com/bincrafters/conan-freetype"
     homepage = "https://www.freetype.org"
@@ -38,16 +38,15 @@ class FreetypeConan(ConanFile):
             del self.options.fPIC
 
     def configure(self):
-        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and "MT" in self.settings.compiler.runtime:
-            raise Exception("FreeType does not support runtime MT")
         del self.settings.compiler.libcxx
 
     def source(self):
         source_url = "http://downloads.sourceforge.net/project/freetype/freetype2"
-        archive_file = '{0}-{1}.tar.gz'.format(self.name, self.version)
-        source_file = '{0}/{1}/{2}'.format(source_url, self.version, archive_file)
+        version = self.version[:-2]
+        archive_file = '{0}-{1}.tar.gz'.format(self.name, version)
+        source_file = '{0}/{1}/{2}'.format(source_url, version, archive_file)
         tools.get(source_file)
-        os.rename('{0}-{1}'.format(self.name, self.version), self.source_subfolder)
+        os.rename('{0}-{1}'.format(self.name, version), self.source_subfolder)
         self.patch_windows()
 
     def patch_windows(self):
