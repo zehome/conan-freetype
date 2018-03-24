@@ -5,6 +5,7 @@
 
 
 #include <stdio.h>
+#include <stddef.h>
 #include <string.h>
 #include <math.h>
 
@@ -66,7 +67,7 @@ main( int     argc,
 
   double        angle;
   int           target_height;
-  int           n, num_chars;
+  size_t        n, num_chars;
 
 
   filename      = "OpenSans-Bold.ttf";

@@ -46,6 +46,15 @@ class FreetypeConan(ConanFile):
         source_file = '{0}/{1}/{2}'.format(source_url, self.version, archive_file)
         tools.get(source_file)
         os.rename('{0}-{1}'.format(self.name, self.version), self.source_subfolder)
+        self.patch_windows()
+
+    def patch_windows(self):
+        if self.settings.os == "Windows":
+            pattern = 'if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)\n' + \
+                      '  message(FATAL_ERROR "Building shared libraries on Windows needs MinGW")\n' + \
+                      'endif ()\n'
+            cmake_file = os.path.join(self.source_subfolder, 'CMakeLists.txt')
+            tools.replace_in_file(cmake_file, pattern, '')
 
     def configure_cmake(self):
         cmake = CMake(self)
