@@ -57,6 +57,13 @@ class FreetypeConan(ConanFile):
             cmake_file = os.path.join(self.source_subfolder, 'CMakeLists.txt')
             tools.replace_in_file(cmake_file, pattern, '')
 
+    def patch_msvc_mt(self):
+        if self.settings.os == "Windows" and \
+           self.settings.compiler == "Visual Studio" and \
+           "MT" in self.settings.compiler.runtime:
+            header_file = os.path.join(self.source_subfolder, "include", "freetype", "config", "ftconfig.h")
+            tools.replace_in_file(header_file, "#ifdef _MSC_VER", "#if 0")
+
     def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["PROJECT_VERSION"] = self.version
@@ -69,6 +76,7 @@ class FreetypeConan(ConanFile):
 
     def build(self):
         cmake = self.configure_cmake()
+        self.patch_msvc_mt()
         cmake.build()
 
     def package(self):
