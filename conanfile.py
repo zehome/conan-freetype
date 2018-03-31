@@ -62,6 +62,8 @@ class FreetypeConan(ConanFile):
         cmake.definitions["PROJECT_VERSION"] = self.version
         if self.settings.os != "Windows":
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+        elif self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
+            cmake.definitions['CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS'] = self.options.shared
         cmake.definitions["WITH_ZLIB"] = self.options.with_zlib
         cmake.definitions["WITH_PNG"] = self.options.with_png
         cmake.configure(build_dir=self.build_subfolder)
