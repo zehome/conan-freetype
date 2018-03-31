@@ -75,8 +75,8 @@ class FreetypeConan(ConanFile):
         return cmake
 
     def build(self):
-        cmake = self.configure_cmake()
         self.patch_msvc_mt()
+        cmake = self.configure_cmake()
         cmake.build()
 
     def package(self):
