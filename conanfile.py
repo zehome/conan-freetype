@@ -7,7 +7,7 @@ import os
 
 class FreetypeConan(ConanFile):
     name = "freetype"
-    version = "2.9.0"
+    version = "2.8.1"
     description = "FreeType is a freely available software library to render fonts."
     url = "http://github.com/bincrafters/conan-freetype"
     homepage = "https://www.freetype.org"
@@ -57,13 +57,6 @@ class FreetypeConan(ConanFile):
             cmake_file = os.path.join(self.source_subfolder, 'CMakeLists.txt')
             tools.replace_in_file(cmake_file, pattern, '')
 
-    def patch_msvc_mt(self):
-        if self.settings.os == "Windows" and \
-           self.settings.compiler == "Visual Studio" and \
-           "MT" in self.settings.compiler.runtime:
-            header_file = os.path.join(self.source_subfolder, "include", "freetype", "config", "ftconfig.h")
-            tools.replace_in_file(header_file, "#ifdef _MSC_VER", "#if 0")
-
     def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["PROJECT_VERSION"] = self.version
@@ -75,7 +68,6 @@ class FreetypeConan(ConanFile):
         return cmake
 
     def build(self):
-        self.patch_msvc_mt()
         cmake = self.configure_cmake()
         cmake.build()
 
