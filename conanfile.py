@@ -41,10 +41,10 @@ class FreetypeConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def source(self):
-        source_url = "http://downloads.sourceforge.net/project/freetype/freetype2"
+        source_url = "https://download.savannah.gnu.org/releases/"
         version = self.version[:-2]
         archive_file = '{0}-{1}.tar.gz'.format(self.name, version)
-        source_file = '{0}/{1}/{2}'.format(source_url, version, archive_file)
+        source_file = '{0}/{1}/{2}'.format(source_url, self.name, archive_file)
         tools.get(source_file)
         os.rename('{0}-{1}'.format(self.name, version), self.source_subfolder)
         self.patch_windows()
