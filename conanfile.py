@@ -59,6 +59,17 @@ class FreetypeConan(ConanFile):
 
     def configure_cmake(self):
         cmake = CMake(self)
+        cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' else '-lfreetype'
+        if self.options.with_png:
+            cmake.definitions["PC_PNG_LIBRARY"] = '-l%s' % self.deps_cpp_info['libpng'].libs[0]
+        else:
+            cmake.definitions["PC_PNG_LIBRARY"] = ''
+        if self.options.with_zlib:
+            cmake.definitions["PC_ZLIB_LIBRARY"] = '-l%s' % self.deps_cpp_info['zlib'].libs[0]
+            cmake.definitions["PC_BZIP2_LIBRARY"] = '-l%s' % self.deps_cpp_info['bzip2'].libs[0]
+        else:
+            cmake.definitions["PC_ZLIB_LIBRARY"] = ''
+            cmake.definitions["PC_BZIP2_LIBRARY"] = ''
         cmake.definitions["PROJECT_VERSION"] = self.version
         if self.settings.os != "Windows":
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
