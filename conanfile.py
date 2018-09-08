@@ -59,6 +59,10 @@ class FreetypeConan(ConanFile):
 
     def configure_cmake(self):
         cmake = CMake(self)
+        system_libraries = ''
+        if self.settings.os == 'Linux':
+            system_libraries = '-lm'
+        cmake.definitions["PC_SYSTEM_LIBRARIES"] = system_libraries
         cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' else '-lfreetype'
         if self.options.with_png:
             cmake.definitions["PC_PNG_LIBRARY"] = '-l%s' % self.deps_cpp_info['libpng'].libs[0]
