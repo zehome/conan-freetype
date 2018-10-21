@@ -23,9 +23,9 @@ class FreetypeConan(ConanFile):
         "with_png": [True, False],
         "with_zlib": [True, False]
     }
-    default_options = ("shared=False", "fPIC=True", "with_png=True", "with_zlib=True")
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    default_options = {'shared': False, 'fPIC': True, 'with_png': True, 'with_zlib': True}
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
 
     def requirements(self):
         if self.options.with_png:
@@ -46,31 +46,32 @@ class FreetypeConan(ConanFile):
         archive_file = '{0}-{1}.tar.gz'.format(self.name, version)
         source_file = '{0}/{1}/{2}'.format(source_url, self.name, archive_file)
         tools.get(source_file)
-        os.rename('{0}-{1}'.format(self.name, version), self.source_subfolder)
-        self.patch_windows()
+        os.rename('{0}-{1}'.format(self.name, version), self._source_subfolder)
+        self._patch_windows()
 
-    def patch_windows(self):
+    def _patch_windows(self):
         if self.settings.os == "Windows":
             pattern = 'if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)\n' + \
                       '  message(FATAL_ERROR "Building shared libraries on Windows needs MinGW")\n' + \
                       'endif ()\n'
-            cmake_file = os.path.join(self.source_subfolder, 'CMakeLists.txt')
+            cmake_file = os.path.join(self._source_subfolder, 'CMakeLists.txt')
             tools.replace_in_file(cmake_file, pattern, '')
 
-    def patch_msvc_mt(self):
+    def _patch_msvc_mt(self):
         if self.settings.os == "Windows" and \
            self.settings.compiler == "Visual Studio" and \
            "MT" in self.settings.compiler.runtime:
-            header_file = os.path.join(self.source_subfolder, "include", "freetype", "config", "ftconfig.h")
+            header_file = os.path.join(self._source_subfolder, "include", "freetype", "config", "ftconfig.h")
             tools.replace_in_file(header_file, "#ifdef _MSC_VER", "#if 0")
 
-    def configure_cmake(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
         system_libraries = ''
         if self.settings.os == 'Linux':
             system_libraries = '-lm'
         cmake.definitions["PC_SYSTEM_LIBRARIES"] = system_libraries
-        cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' else '-lfreetype'
+        cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' \
+            else '-lfreetype'
         if self.options.with_png:
             cmake.definitions["PC_PNG_LIBRARY"] = '-l%s' % self.deps_cpp_info['libpng'].libs[0]
         else:
@@ -82,25 +83,23 @@ class FreetypeConan(ConanFile):
             cmake.definitions["PC_ZLIB_LIBRARY"] = ''
             cmake.definitions["PC_BZIP2_LIBRARY"] = ''
         cmake.definitions["PROJECT_VERSION"] = self.version
-        if self.settings.os != "Windows":
-            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.definitions["WITH_ZLIB"] = self.options.with_zlib
         cmake.definitions["WITH_PNG"] = self.options.with_png
-        cmake.configure(build_dir=self.build_subfolder)
+        cmake.configure(build_dir=self._build_subfolder)
         return cmake
 
     def build(self):
-        self.patch_msvc_mt()
-        cmake = self.configure_cmake()
+        self._patch_msvc_mt()
+        cmake = self._configure_cmake()
         cmake.build()
 
     def package(self):
-        cmake = self.configure_cmake()
+        cmake = self._configure_cmake()
         cmake.install()
         self.copy("FindFreetype.cmake")
-        self.copy("FTL.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
-        self.copy("GPLv2.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
-        self.copy("LICENSE.TXT", dst="licenses", src=os.path.join(self.source_subfolder, "docs"))
+        self.copy("FTL.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
+        self.copy("GPLv2.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
+        self.copy("LICENSE.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
