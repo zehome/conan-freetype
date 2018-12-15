@@ -7,7 +7,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     if which pyenv > /dev/null; then
         eval "$(pyenv init -)"
     fi
-    pyenv activate conan
+    time pyenv activate conan
 fi
 
 python build.py

@@ -53,3 +53,15 @@ install:
 script:
   - chmod +x .ci/run.sh
   - ./.ci/run.sh
+
+cache:
+   directories:
+      - $HOME/Library/Caches/Homebrew
+      - $HOME/Library/Caches/pip
+      - $HOME/.cache/pip
+      - $HOME/.pyenv
+      - $HOME/.pyenv_cache
+      - /usr/local/Homebrew
+
+before_cache:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew cleanup && rm -rf /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask/homebrew-cask; fi
