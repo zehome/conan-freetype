@@ -21,9 +21,16 @@ class FreetypeConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "with_png": [True, False],
-        "with_zlib": [True, False]
+        "with_zlib": [True, False],
+        "with_bzip2": [True, False],
     }
-    default_options = ("shared=False", "fPIC=True", "with_png=True", "with_zlib=True")
+    default_options = (
+        "shared=False", 
+        "fPIC=True", 
+        "with_png=True", 
+        "with_zlib=True",
+        "with_bzip2=True",
+    )
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
@@ -31,6 +38,8 @@ class FreetypeConan(ConanFile):
         if self.options.with_png:
             self.requires.add("libpng/1.6.34@bincrafters/stable")
         if self.options.with_zlib:
+            self.requires.add("zlib/1.2.11@conan/stable")
+        if self.options.with_bzip2:
             self.requires.add("bzip2/1.0.6@conan/stable")
 
     def config_options(self):
@@ -70,9 +79,11 @@ class FreetypeConan(ConanFile):
             cmake.definitions["PC_PNG_LIBRARY"] = ''
         if self.options.with_zlib:
             cmake.definitions["PC_ZLIB_LIBRARY"] = '-l%s' % self.deps_cpp_info['zlib'].libs[0]
-            cmake.definitions["PC_BZIP2_LIBRARY"] = '-l%s' % self.deps_cpp_info['bzip2'].libs[0]
         else:
             cmake.definitions["PC_ZLIB_LIBRARY"] = ''
+        if self.options.with_bzip2:
+            cmake.definitions["PC_BZIP2_LIBRARY"] = '-l%s' % self.deps_cpp_info['bzip2'].libs[0]
+        else:
             cmake.definitions["PC_BZIP2_LIBRARY"] = ''
         cmake.definitions["PROJECT_VERSION"] = self.version
         if self.settings.os != "Windows":
