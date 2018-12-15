@@ -4,6 +4,8 @@ set -e
 set -x
 
 export PYTHON_BUILD_CACHE_PATH=$HOME/.pyenv_cache
+export PIP_WHEEL_DIR=$HOME/.cache/pip/wheel
+export PIP_FIND_LINKS=file://$HOME/.cache/pip/wheels
 
 if [[ "$(uname -s)" == 'Darwin' ]]; then
     rm -rf /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask/homebrew-cask || true
