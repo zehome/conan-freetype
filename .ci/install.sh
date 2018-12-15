@@ -20,6 +20,8 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     time pyenv virtualenv 3.7.1 conan -f
     time pyenv rehash
     time pyenv activate conan
+else
+    time docker pull ${CONAN_DOCKER_IMAGE}
 fi
 
 time pip install conan --upgrade
