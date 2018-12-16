@@ -5,6 +5,10 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
+
+add_definitions("-DHB_SCRIPT_ADLAM=1097100397")
+add_definitions("-DHB_SCRIPT_OSAGE=1332963173")
+
 add_subdirectory(source_subfolder)
 
 set(DEST_DIR "${CMAKE_INSTALL_PREFIX}")
