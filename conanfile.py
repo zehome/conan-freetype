@@ -7,13 +7,14 @@ import os
 
 class FreetypeConan(ConanFile):
     name = "freetype"
-    version = "2.9.0"
+    version = "2.9.1"
     description = "FreeType is a freely available software library to render fonts."
     url = "http://github.com/bincrafters/conan-freetype"
     homepage = "https://www.freetype.org"
     license = "BSD"
+    topics = ("conan", "freetype", "fonts")
     author = "Bincrafters <bincrafters@gmail.com>"
-    exports = ["LICENSE.md", "FindFreetype.cmake"]
+    exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "freetype.pc.in"]
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
@@ -24,13 +25,13 @@ class FreetypeConan(ConanFile):
         "with_zlib": [True, False],
         "with_bzip2": [True, False],
     }
-    default_options = (
-        "shared=False", 
-        "fPIC=True", 
-        "with_png=True", 
-        "with_zlib=True",
-        "with_bzip2=True",
-    )
+    default_options = {
+        'shared': False,
+        'fPIC': True,
+        'with_png': True,
+        'with_zlib': True,
+        'with_bzip2': True
+    }
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
@@ -54,7 +55,8 @@ class FreetypeConan(ConanFile):
         version = self.version[:-2]
         archive_file = '{0}-{1}.tar.gz'.format(self.name, version)
         source_file = '{0}/{1}/{2}'.format(source_url, self.name, archive_file)
-        tools.get(source_file)
+        sha256 = "bf380e4d7c4f3b5b1c1a7b2bf3abb967bda5e9ab480d0df656e0e08c5019c5e6"
+        tools.get(source_file, sha256=sha256)
         os.rename('{0}-{1}'.format(self.name, version), self._source_subfolder)
         self._patch_windows()
 
@@ -79,8 +81,7 @@ class FreetypeConan(ConanFile):
         if self.settings.os == 'Linux':
             system_libraries = '-lm'
         cmake.definitions["PC_SYSTEM_LIBRARIES"] = system_libraries
-        cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' \
-            else '-lfreetype'
+        cmake.definitions["PC_FREETYPE_LIBRARY"] = '-lfreetyped' if self.settings.build_type == 'Debug' else '-lfreetype'
         if self.options.with_png:
             cmake.definitions["PC_PNG_LIBRARY"] = '-l%s' % self.deps_cpp_info['libpng'].libs[0]
         else:
@@ -107,7 +108,6 @@ class FreetypeConan(ConanFile):
     def package(self):
         cmake = self._configure_cmake()
         cmake.install()
-        self.copy("FindFreetype.cmake")
         self.copy("FTL.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
         self.copy("GPLv2.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
         self.copy("LICENSE.TXT", dst="licenses", src=os.path.join(self._source_subfolder, "docs"))
