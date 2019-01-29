@@ -24,24 +24,29 @@ class FreetypeConan(ConanFile):
         "with_png": [True, False],
         "with_zlib": [True, False],
         "with_bzip2": [True, False],
+        "with_harfbuzz": [True, False],
     }
     default_options = {
         'shared': False,
         'fPIC': True,
         'with_png': True,
         'with_zlib': True,
-        'with_bzip2': True
+        'with_bzip2': True,
+        "with_harfbuzz": True,
     }
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
     def requirements(self):
         if self.options.with_png:
-            self.requires.add("libpng/1.6.34@bincrafters/stable")
+            self.requires.add("libpng/1.6.36@bincrafters/stable")
         if self.options.with_zlib:
             self.requires.add("zlib/1.2.11@conan/stable")
         if self.options.with_bzip2:
             self.requires.add("bzip2/1.0.6@conan/stable")
+        if self.options.with_harfbuzz:
+            self.requires.add("harfbuzz/2.3.0@bincrafters/stable")
+
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -94,9 +99,15 @@ class FreetypeConan(ConanFile):
             cmake.definitions["PC_BZIP2_LIBRARY"] = '-l%s' % self.deps_cpp_info['bzip2'].libs[0]
         else:
             cmake.definitions["PC_BZIP2_LIBRARY"] = ''
+        if self.options.with_harfbuzz:
+            cmake.definitions["PC_HARFBUZZ_LIBRARY"] = '-l%s' % self.deps_cpp_info['harfbuzz'].libs[0]
+        else:
+            cmake.definitions["PC_HARFBUZZ_LIBRARY"] = ''
+
         cmake.definitions["PROJECT_VERSION"] = self.version
         cmake.definitions["WITH_ZLIB"] = self.options.with_zlib
         cmake.definitions["WITH_PNG"] = self.options.with_png
+        cmake.definitions["WITH_HarfBuzz"] = self.options.with_harfbuzz
         cmake.configure(build_dir=self._build_subfolder)
         return cmake
 
@@ -117,3 +128,5 @@ class FreetypeConan(ConanFile):
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("m")
         self.cpp_info.includedirs.append(os.path.join("include", "freetype2"))
+        self.env_info.PKG_CONFIG_PATH.append(
+            os.path.join(self.package_folder, "lib", "pkgconfig"))
